@@ -1,0 +1,17 @@
+.coverage
+coverage.xml
+*.egg-info
+.eggs/
+*.pyc
+app.db
+./tmp
+build/
+dist/
+docs/_build/
+.idea
+.idea/
+env
+venv
+*.sublime*
+.vscode/
+.tox
