@@ -1,6 +1,7 @@
 from flask import render_template, flash
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder import ModelView, ModelRestApi
+from flask_appbuilder import MultipleView, MasterDetailView
 
 from . import appbuilder, db
 
@@ -8,6 +9,8 @@ from . import appbuilder, db
 from .models import *
 #------for all forms
 from .forms import *
+#------for all apis
+from .apis import *
 
 
 
@@ -81,6 +84,12 @@ class GroupModelView(ModelView):
     datamodel = SQLAInterface(ContactGroup)
     related_views = [ContactModelView]
 
+class MultipleViewsExp(MultipleView):
+    views = [GroupModelView, ContactModelView]
+
+class GroupMasterView(MasterDetailView):
+    datamodel = SQLAInterface(ContactGroup)
+    related_views = [ContactModelView]
 
 
 appbuilder.add_view(MyView, "Method1", category='My View')
@@ -144,6 +153,18 @@ appbuilder.add_view(
 appbuilder.add_view(
     ContactModelView,
     "List Contacts",
+    icon = "fa-envelope",
+    category = "Contacts"
+)
+appbuilder.add_view(
+    MultipleViewsExp,
+    "Multiple Views",
+    icon = "fa-envelope",
+    category = "Contacts"
+)
+appbuilder.add_view(
+    GroupMasterView,
+    "Master  Views",
     icon = "fa-envelope",
     category = "Contacts"
 )
