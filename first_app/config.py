@@ -108,3 +108,28 @@ IMG_UPLOAD_URL = "/static/uploads/"
 # APP_THEME = "spacelab.css"
 # APP_THEME = "united.css"
 # APP_THEME = "yeti.css"
+
+
+
+
+#To access Swagger UI you must enable 
+print('''
+y
+e
+s
+
+y
+o
+u
+
+a
+r
+e
+
+h
+e
+r
+e
+''')
+FAB_API_SWAGGER_UI = True
+#then goto http://localhost:8080/swaggerview/v1 #http://localhost:5000/swaggerview/v1
