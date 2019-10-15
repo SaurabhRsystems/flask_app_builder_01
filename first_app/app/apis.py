@@ -1,8 +1,10 @@
 from flask import request
-from flask_appbuilder.api import BaseApi, expose, rison, safe
+from flask_appbuilder.api import BaseApi, expose, rison, safe, ModelRestApi
 from flask_appbuilder.security.decorators import protect
 from . import appbuilder
 import prison
+from .models import ContactGroup
+from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 
 class ExampleApi(BaseApi):
@@ -142,7 +144,12 @@ class ExampleApi(BaseApi):
             401:
               $ref: '#/components/responses/401'
         """
+        print('this is private')
         return self.response(200, message="This is private")
 
+class GroupModelApi(ModelRestApi):
+    resource_name = 'group'
+    datamodel = SQLAInterface(ContactGroup)
 
 appbuilder.add_api(ExampleApi)
+appbuilder.add_api(GroupModelApi)

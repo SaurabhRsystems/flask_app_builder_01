@@ -1,10 +1,4 @@
 from flask import render_template, flash
-from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_appbuilder import ModelView, ModelRestApi
-from flask_appbuilder import MultipleView, MasterDetailView
-
-from . import appbuilder, db
-
 #------for all models
 from .models import *
 #------for all forms
@@ -12,12 +6,44 @@ from .forms import *
 #------for all apis
 from .apis import *
 
+from . import appbuilder, db
+from flask_appbuilder.models.sqla.interface import SQLAInterface
+from flask_appbuilder import ModelRestApi, ModelView, MultipleView, MasterDetailView, \
+    AppBuilder, BaseView, expose, has_access, SimpleFormView
+from flask_appbuilder.widgets import ListThumbnail
 
-
-from flask_appbuilder import AppBuilder, BaseView, expose, has_access
-
-from flask_appbuilder import SimpleFormView
 from flask_babel import lazy_gettext as _
+
+"""
+    Create your Model based REST API::
+
+    class MyModelApi(ModelRestApi):
+        datamodel = SQLAInterface(MyModel)
+
+    appbuilder.add_api(MyModelApi)
+
+
+    Create your Views::
+
+
+    class MyModelView(ModelView):
+        datamodel = SQLAInterface(MyModel)
+
+
+    Next, register your Views::
+
+
+    appbuilder.add_view(
+        MyModelView,
+        "My View",
+        icon="fa-folder-open-o",
+        category="My Category",
+        category_icon='fa-envelope'
+    )
+"""
+"""
+    Application wide 404 error handler
+"""
 
 
 class MyView(BaseView):
@@ -63,6 +89,7 @@ class MyFormView(SimpleFormView):
         # post process form
         flash(self.message, 'info')
 
+
 class ContactModelView(ModelView):
     datamodel = SQLAInterface(Contact)
 
@@ -91,46 +118,28 @@ class GroupMasterView(MasterDetailView):
     datamodel = SQLAInterface(ContactGroup)
     related_views = [ContactModelView]
 
+class PersonModelView(ModelView):
+    datamodel = SQLAInterface(Person)
 
-appbuilder.add_view(MyView, "Method1", category='My View')
-appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
-appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
-appbuilder.add_view(MyFormView, "My form View", icon="fa-group", label=_('My form View'),
-                     category="My Forms", category_icon="fa-cogs")
+    list_widget = ListThumbnail
 
-
-"""
-    Create your Model based REST API::
-
-    class MyModelApi(ModelRestApi):
-        datamodel = SQLAInterface(MyModel)
-
-    appbuilder.add_api(MyModelApi)
+    label_columns = {'name':'Name','photo':'Photo','photo_img':'Photo', 'photo_img_thumbnail':'Photo'}
+    list_columns = ['photo_img_thumbnail', 'name']
+    show_columns = ['photo_img','name']
 
 
-    Create your Views::
+class EmployeeView(ModelView):
+    datamodel = SQLAInterface(Employee)
 
+    list_columns = ['full_name', 'department', 'employee_number']
 
-    class MyModelView(ModelView):
-        datamodel = SQLAInterface(MyModel)
+class FunctionView(ModelView):
+    datamodel = SQLAInterface(Function)
+    related_views = [EmployeeView]
 
-
-    Next, register your Views::
-
-
-    appbuilder.add_view(
-        MyModelView,
-        "My View",
-        icon="fa-folder-open-o",
-        category="My Category",
-        category_icon='fa-envelope'
-    )
-"""
-
-"""
-    Application wide 404 error handler
-"""
-
+class DepartmentView(ModelView):
+    datamodel = SQLAInterface(Department)
+    related_views = [EmployeeView]
 
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):
@@ -141,30 +150,21 @@ def page_not_found(e):
         404,
     )
 
-
 db.create_all()
-appbuilder.add_view(
-    GroupModelView,
-    "List Groups",
-    icon = "fa-folder-open-o",
-    category = "Contacts",
-    category_icon = "fa-envelope"
-)
-appbuilder.add_view(
-    ContactModelView,
-    "List Contacts",
-    icon = "fa-envelope",
-    category = "Contacts"
-)
-appbuilder.add_view(
-    MultipleViewsExp,
-    "Multiple Views",
-    icon = "fa-envelope",
-    category = "Contacts"
-)
-appbuilder.add_view(
-    GroupMasterView,
-    "Master  Views",
-    icon = "fa-envelope",
-    category = "Contacts"
-)
+
+appbuilder.add_view(MyView, "Method1", category='My View')
+appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
+appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
+appbuilder.add_view(MyFormView, "My form View", icon="fa-group", label=_('My form View'), category="My Forms", category_icon="fa-cogs")
+
+appbuilder.add_view(GroupModelView, "List Groups", icon = "fa-folder-open-o", category = "Contacts", category_icon = "fa-envelope")
+appbuilder.add_view(ContactModelView, "List Contacts", icon = "fa-envelope", category = "Contacts")
+appbuilder.add_view(MultipleViewsExp, "Multiple Views", icon = "fa-envelope", category = "Contacts")
+appbuilder.add_view(GroupMasterView, "Master  Views", icon = "fa-envelope", category = "Contacts")
+appbuilder.add_view(PersonModelView, "Person Manager", icon="fa-group", label=_('PerMan - alt_name'),category="Person", category_icon="fa-cogs")
+
+appbuilder.add_view(EmployeeView, "Employees", icon="fa-folder-open-o", category="Company")
+appbuilder.add_separator("Company")
+appbuilder.add_view(DepartmentView, "Departments", icon="fa-folder-open-o", category="Company")
+appbuilder.add_view(FunctionView, "Functions", icon="fa-folder-open-o", category="Company")
+
