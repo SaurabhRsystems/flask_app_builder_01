@@ -7,12 +7,16 @@ from .forms import *
 from .apis import *
 
 from . import appbuilder, db
+
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder import ModelRestApi, ModelView, MultipleView, MasterDetailView, \
     AppBuilder, BaseView, expose, has_access, SimpleFormView
 from flask_appbuilder.widgets import ListThumbnail
+from flask_appbuilder.fieldwidgets import Select2Widget
 
 from flask_babel import lazy_gettext as _
+
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 """
     Create your Model based REST API::
@@ -128,10 +132,25 @@ class PersonModelView(ModelView):
     show_columns = ['photo_img','name']
 
 
+def department_query():
+    return db.session.query(Department)
+class EmployeeHistoryView(ModelView):
+    datamodel = SQLAInterface(EmployeeHistory)
+    list_columns = ['department', 'begin_date', 'end_date']
+
 class EmployeeView(ModelView):
     datamodel = SQLAInterface(Employee)
-
     list_columns = ['full_name', 'department', 'employee_number']
+    edit_form_extra_fields = {
+        "department": QuerySelectField(
+            "Department",
+            query_factory=department_query,
+            widget=Select2Widget(extra_classes="readonly"),
+        )
+    }
+
+    related_views = [EmployeeHistoryView]
+    show_template = 'appbuilder/general/model/show_cascade.html'
 
 class FunctionView(ModelView):
     datamodel = SQLAInterface(Function)
@@ -140,6 +159,16 @@ class FunctionView(ModelView):
 class DepartmentView(ModelView):
     datamodel = SQLAInterface(Department)
     related_views = [EmployeeView]
+
+class BenefitView(ModelView):
+    datamodel = SQLAInterface(Benefit)
+    related_views = [EmployeeView]
+    add_columns = ['name']
+    edit_columns = ['name']
+    show_columns = ['name']
+    list_columns = ['name']
+
+
 
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):
@@ -167,4 +196,5 @@ appbuilder.add_view(EmployeeView, "Employees", icon="fa-folder-open-o", category
 appbuilder.add_separator("Company")
 appbuilder.add_view(DepartmentView, "Departments", icon="fa-folder-open-o", category="Company")
 appbuilder.add_view(FunctionView, "Functions", icon="fa-folder-open-o", category="Company")
-
+appbuilder.add_view(BenefitView, "Benefits", icon="fa-folder-open-o", category="Company")
+appbuilder.add_view_no_menu(EmployeeHistoryView, "EmployeeHistoryView")

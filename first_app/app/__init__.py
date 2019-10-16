@@ -3,6 +3,9 @@ import logging
 from flask import Flask
 from flask_appbuilder import AppBuilder, SQLA
 
+#manually created security.py
+from .security import MySecurityManager
+
 """
  Logging configuration
 """
@@ -13,7 +16,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 app = Flask(__name__)
 app.config.from_object("config")
 db = SQLA(app)
-appbuilder = AppBuilder(app, db.session)
+appbuilder = AppBuilder(app, db.session, security_manager_class=MySecurityManager)
 
 
 """
@@ -29,4 +32,4 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 """
 
-from . import views
+from . import models, views
