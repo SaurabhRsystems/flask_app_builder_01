@@ -1,4 +1,4 @@
-from flask import render_template, flash
+from flask import render_template, flash, g
 #------for all models
 from .models import *
 #------for all forms
@@ -8,9 +8,12 @@ from .apis import *
 
 from . import appbuilder, db
 
+from flask_appbuilder.actions import action
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_appbuilder import ModelRestApi, ModelView, MultipleView, MasterDetailView, \
-    AppBuilder, BaseView, expose, has_access, SimpleFormView
+from flask_appbuilder.models.sqla.filters import FilterEqualFunction, FilterStartsWith
+# If you're using Mongo Engine you should import filters like this, everything else is exactly the same
+# from flask_appbuilder.models.mongoengine.filters import FilterStartsWith, FilterEqualFunction
+from flask_appbuilder import ModelRestApi, ModelView, MultipleView, MasterDetailView, AppBuilder, BaseView, expose, has_access, SimpleFormView
 from flask_appbuilder.widgets import ListThumbnail
 from flask_appbuilder.fieldwidgets import Select2Widget
 
@@ -114,6 +117,39 @@ class ContactModelView(ModelView):
 class GroupModelView(ModelView):
     datamodel = SQLAInterface(ContactGroup)
     related_views = [ContactModelView]
+    #Base available permission are: can_add, can_edit, can_delete, can_list, can_show
+    base_permissions = ['can_add','can_delete','can_list']
+
+    @action("myaction","Do something on this record","Do you really want to?","fa-rocket")
+    def myaction(self, item):
+        """
+            do something with the item record
+        """
+        return redirect(self.get_redirect())
+
+    @action("myaction2","Do something on this record","Do you really want to?","fa-rocket")
+    def myaction2(self, item):
+        """
+            do something with the item record
+        """
+        return redirect(self.get_redirect())
+
+    @action("muldelete", "Delete", "Delete all Really?", "fa-rocket", single=False)
+    def muldelete(self, items):
+        '''single=False makes it only available in list view and not in show view'''
+        self.datamodel.delete_all(items)
+        self.update_redirect()
+        return redirect(self.get_redirect())
+
+    @action("muldelete", "Delete", "Delete all Really?", "fa-rocket")
+    def muldelete(self, items):
+        '''removing single=False makes it available in list view and show view it should be able to manage single and multiple items'''
+        if isinstance(items, list):
+            self.datamodel.delete_all(items)
+            self.update_redirect()
+        else:
+            self.datamodel.delete(items)
+        return redirect(self.get_redirect())
 
 class MultipleViewsExp(MultipleView):
     views = [GroupModelView, ContactModelView]
@@ -170,6 +206,26 @@ class BenefitView(ModelView):
 
 
 
+def get_user():
+    return g.user
+class MyModelView(ModelView):
+    datamodel = SQLAInterface(MyModel)
+    list_columns = ['name', 'my_custom']
+    base_filters = [#['created_by', FilterEqualFunction, get_user],
+                    ['name', FilterStartsWith, 'a']]
+    base_order = ('name','desc')
+    '''# You can pass extra Jinja2 arguments to your custom template, using extra_args property:
+    extra_args = {'my_extra_arg':'SOMEVALUE'}
+    show_template = 'my_show_template.html' '''
+    '''# add custom form using wtform
+    add_form = AddFormWTF'''
+    
+    add_columns = ['my_field1', 'my_field2']
+    edit_columns = ['my_field1']
+
+
+
+
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):
     return (
@@ -198,3 +254,6 @@ appbuilder.add_view(DepartmentView, "Departments", icon="fa-folder-open-o", cate
 appbuilder.add_view(FunctionView, "Functions", icon="fa-folder-open-o", category="Company")
 appbuilder.add_view(BenefitView, "Benefits", icon="fa-folder-open-o", category="Company")
 appbuilder.add_view_no_menu(EmployeeHistoryView, "EmployeeHistoryView")
+
+
+appbuilder.add_view(MyModelView, "MyModelView", icon="fa-folder-open-o", category="Company")

@@ -2,6 +2,7 @@ import datetime
 from flask import Markup, url_for
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text, \
     Table
+from flask_appbuilder.models.decorators import renders
 from sqlalchemy.orm import relationship
 from flask_appbuilder.models.mixins import ImageColumn
 from flask_appbuilder.filemanager import ImageManager
@@ -121,4 +122,18 @@ class EmployeeHistory(Model):
     end_date = Column(Date)
 
 
+class MyModel(Model):
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique = True, nullable=False)
+    custom = Column(Integer)
+    my_field1 = Column(String(50), nullable = True)
+    my_field2 = Column(String(50), nullable = True)
+    my_field3 = Column(String(50), nullable = True)
+    my_field4 = Column(String(50), nullable = True)
+    my_field5 = Column(String(50), nullable = True)
 
+
+    @renders('custom')
+    def my_custom(self):
+    # will render this columns as bold on ListWidget
+        return Markup(f"<b> {self.custom} </b>")

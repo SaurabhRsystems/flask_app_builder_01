@@ -1,6 +1,7 @@
 import logging
 
 from flask import Flask
+from flask_migrate import Migrate
 from flask_appbuilder import AppBuilder, SQLA
 
 #manually created security.py
@@ -17,6 +18,7 @@ app = Flask(__name__)
 app.config.from_object("config")
 db = SQLA(app)
 appbuilder = AppBuilder(app, db.session, security_manager_class=MySecurityManager)
+migrate = Migrate(app,db)
 
 
 """
