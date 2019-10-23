@@ -1,4 +1,6 @@
 import os
+# for mssqlserver
+import urllib
 from flask_appbuilder.security.manager import (
     AUTH_OID,
     AUTH_REMOTE_USER,
@@ -13,9 +15,17 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 SECRET_KEY = "\2\1thisismyscretkey\1\2\e\y\y\h"
 
 # The SQLAlchemy connection string.
-SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
+# SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
+
+params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=SEZ111CIAN;DATABASE=myapp;UID=sa;PWD=sa123456;Trusted_Connection=yes;')
+SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params
+
+
 # SQLALCHEMY_DATABASE_URI = 'mysql://myapp@localhost/myapp'
 # SQLALCHEMY_DATABASE_URI = 'postgresql://root:password@localhost/myapp'
+
+# 835: FSADeprecationWarning: SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and will be disabled by default in the future.  Set it to True or False to suppress this warning.
+SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # Flask-WTF flag for CSRF
 CSRF_ENABLED = True

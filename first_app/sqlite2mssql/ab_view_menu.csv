@@ -1,0 +1,66 @@
+id,name
+1,IndexView
+2,UtilView
+3,LocaleView
+4,SecurityApi
+5,ResetPasswordView
+6,ResetMyPasswordView
+7,UserInfoEditView
+8,AuthDBView
+9,UserDBModelView
+10,List Users
+11,Security
+12,RoleModelView
+13,List Roles
+14,UserStatsChartView
+15,User's Statistics
+16,PermissionModelView
+17,Base Permissions
+18,ViewMenuModelView
+19,Views/Menus
+20,PermissionViewModelView
+21,Permission on Views/Menus
+22,OpenApi
+23,RegisterUserDBView
+24,RegisterUserModelView
+25,MyView
+26,Method1
+27,My View
+28,Method2
+29,Methodghfghgf
+30,Method3
+31,MyFormView
+32,My form View
+33,My Forms
+34,GroupModelView
+35,List Groups
+36,Contacts
+37,ContactModelView
+38,List Contacts
+39,MultipleViewsExp
+40,Multiple Views
+41,GroupMasterView
+42,Master  Views
+43,ExampleApi
+44,ExampleApi2
+45,SwaggerView
+46,ExampleApi1
+47,GroupModelApi
+48,PersonModelView
+49,My form Vie
+50,Person Manager
+51,Person
+52,EmployeeView
+53,Employees
+54,Company
+55,DepartmentView
+56,Departments
+57,FunctionView
+58,Functions
+59,BenefitView
+60,Benefits
+61,EmployeeHistoryView
+62,MyUserDBView
+63,MyModelView
+64,ExampleView
+65,Temporary

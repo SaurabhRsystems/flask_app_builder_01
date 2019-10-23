@@ -1,0 +1,4 @@
+id,first_name,last_name,username,password,active,email,last_login,login_count,fail_login_count,created_on,changed_on,created_by_fk,changed_by_fk
+1,Saurabh,Goel,admin,pbkdf2:sha256:150000$lRTNOZRu$668a7d101a1abd7f615373830beb68c5209d1e1a657126c5cc69f9909f00d9bd,1,saurabh.goel@rsystems.com,2019-10-11 12:13:20.463015,16,0,2019-10-01 10:23:24.802125,2019-10-01 10:23:24.802125,,
+2,admin,admin,admin1,pbkdf2:sha256:150000$k4MdqkSn$1d758bcd70bb9fe29288ef943fa4de787158c23c53ebd89d1be7b72c93f4c503,1,admin,,,,2019-10-01 12:40:59.002607,2019-10-01 12:40:59.002607,,
+3,Blogger_001,001,User1,pbkdf2:sha256:150000$WtdCgqGp$8dab1aef017fc2471fc485ffdeb269bcff3f7afe9e9037fc0420e8ce4aba7212,1,blogger@firstapp.com,2019-10-01 16:30:09.964844,1,0,2019-10-01 16:29:30.625071,2019-10-01 16:29:30.625071,,

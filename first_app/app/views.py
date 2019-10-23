@@ -8,6 +8,7 @@ from .apis import *
 
 from . import appbuilder, db
 
+from flask_appbuilder.fields import AJAXSelectField
 from flask_appbuilder.actions import action
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction, FilterStartsWith
@@ -15,11 +16,31 @@ from flask_appbuilder.models.sqla.filters import FilterEqualFunction, FilterStar
 # from flask_appbuilder.models.mongoengine.filters import FilterStartsWith, FilterEqualFunction
 from flask_appbuilder import ModelRestApi, ModelView, MultipleView, MasterDetailView, AppBuilder, BaseView, expose, has_access, SimpleFormView
 from flask_appbuilder.widgets import ListThumbnail
-from flask_appbuilder.fieldwidgets import Select2Widget
+from flask_appbuilder.fieldwidgets import Select2Widget, Select2AJAXWidget, BS3TextFieldWidget #not needed as not working01
 
 from flask_babel import lazy_gettext as _
-
+from flask_babel import gettext #not needed as not working01
+from wtforms import TextField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from wtforms.validators import EqualTo
+
+
+
+class BS3TextFieldROWidget(BS3TextFieldWidget):
+    def __call__(self, field, **kwargs):
+        kwargs['readonly'] = 'true'
+        return super(BS3TextFieldROWidget, self).__call__(field, **kwargs)
+
+
+# temporary
+class ExampleView(ModelView):
+    datamodel = SQLAInterface(ExampleModel)
+    edit_form_extra_fields = {
+        'field2': TextField('field2', widget=BS3TextFieldROWidget())
+    }
+ 
+
+
 
 """
     Create your Model based REST API::
@@ -52,6 +73,12 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
     Application wide 404 error handler
 """
 
+class MyView2(ModelView):
+    datamodel = SQLAInterface(MyModel)
+    list_columns = ['name', 'my_custom']
+    validators_columns = {
+        'my_field1':[EqualTo('my_field2', message=gettext('fields must match'))]
+    }
 
 class MyView(BaseView):
 
@@ -113,6 +140,22 @@ class ContactModelView(ModelView):
             {'fields': ['birthday', 'personal_phone', 'personal_cellphone'], 'expanded': False}
         ),
     ]
+    # You can define individual filters for add,edit and search using \
+    # add_form_quey_rel_fields, edit_form_query_rel_fields, search_form_query_rel_fields respectively\
+    # it will show only fields with keyword
+    add_form_query_rel_fields = {
+        'contact_group': [['name', FilterStartsWith, 'c']],
+        'gender': [['name', FilterStartsWith, 'M']]
+        }
+    add_form_extra_fields = {
+        'contact_group1': AJAXSelectField(
+                            'contact_group',
+                            description='This will be populated with AJAX',
+                            datamodel=datamodel,
+                            col_name='contact_group',
+                            widget=Select2AJAXWidget(endpoint='/contactmodelview/api/column/add/contact_group')
+                         ),
+    }
 
 class GroupModelView(ModelView):
     datamodel = SQLAInterface(ContactGroup)
@@ -184,6 +227,12 @@ class EmployeeView(ModelView):
             widget=Select2Widget(extra_classes="readonly"),
         )
     }
+    ## not working01
+    # add_form_extra_fields = {
+    #     'extra': TextField(gettext('Extra Field'),
+    #     description=gettext('Extra Field description'),
+    #     widget=BS3TextFieldWidget())
+    # }
 
     related_views = [EmployeeHistoryView]
     show_template = 'appbuilder/general/model/show_cascade.html'
@@ -238,6 +287,7 @@ def page_not_found(e):
 db.create_all()
 
 appbuilder.add_view(MyView, "Method1", category='My View')
+appbuilder.add_view(MyView2, "MyView2", category='My View 2')
 appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
 appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
 appbuilder.add_view(MyFormView, "My form View", icon="fa-group", label=_('My form View'), category="My Forms", category_icon="fa-cogs")
@@ -257,3 +307,12 @@ appbuilder.add_view_no_menu(EmployeeHistoryView, "EmployeeHistoryView")
 
 
 appbuilder.add_view(MyModelView, "MyModelView", icon="fa-folder-open-o", category="Company")
+
+
+
+
+
+
+# temporary 
+appbuilder.add_view(ExampleView, "ExampleView", icon="fa-folder-open-o", category="Temporary")
+

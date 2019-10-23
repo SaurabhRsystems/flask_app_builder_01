@@ -9,6 +9,23 @@ from flask_appbuilder.filemanager import ImageManager
 from flask_appbuilder import Model
 #you can use db.Model also
 
+
+
+class ExampleModel(Model):
+    id = Column(Integer, primary_key=True)
+    my_field1 = Column(String(50), nullable = True)
+    my_field2 = Column(String(50), nullable = True)
+    my_field3 = Column(String(50), nullable = True)
+    my_field4 = Column(String(50), nullable = True)
+    my_field5 = Column(String(50), nullable = True)
+    field1 = Column(String(50), nullable = True)
+    field2 = Column(String(50), nullable = True)
+    field3 = Column(String(50), nullable = True)
+    field4 = Column(String(50), nullable = True)
+    field5 = Column(String(50), nullable = True)
+
+
+
 """
 
 You can use the extra Flask-AppBuilder fields and Mixin's
