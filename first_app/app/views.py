@@ -148,7 +148,7 @@ class ContactModelView(ModelView):
         'gender': [['name', FilterStartsWith, 'M']]
         }
     add_form_extra_fields = {
-        'contact_group1': AJAXSelectField(
+        'contact_group': AJAXSelectField(
                             'contact_group',
                             description='This will be populated with AJAX',
                             datamodel=datamodel,
